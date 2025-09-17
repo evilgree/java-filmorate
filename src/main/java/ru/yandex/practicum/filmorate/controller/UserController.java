@@ -21,9 +21,7 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         validateUser(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        setDefaultNameIfBlank(user);
         user.setId(nextId++);
         users.put(user.getId(), user);
         log.info("Создан пользователь: {}", user);
@@ -37,9 +35,7 @@ public class UserController {
             throw new ValidationException("Пользователь с таким id не найден");
         }
         validateUser(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        setDefaultNameIfBlank(user);
         users.put(user.getId(), user);
         log.info("Обновлен пользователь: {}", user);
         return user;
@@ -62,6 +58,12 @@ public class UserController {
         if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Дата рождения в будущем: {}", user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
+        }
+    }
+
+    private void setDefaultNameIfBlank(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
     }
 }

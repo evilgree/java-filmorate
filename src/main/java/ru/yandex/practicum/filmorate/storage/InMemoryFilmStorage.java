@@ -28,7 +28,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         if (film.getId() <= 0 || !films.containsKey(film.getId())) {
-            throw new ValidationException("Фильм с таким id не найден");
+            throw new ValidationException("Фильм с таким id не найден");  // Возвращает 400
         }
         validateFilm(film);
         films.put(film.getId(), film);
@@ -39,7 +39,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(int id) {
         Film film = films.get(id);
         if (film == null) {
-            throw new ValidationException("Фильм с таким id не найден");
+            throw new ValidationException("Фильм с таким id не найден");  // Возвращает 400
         }
         return film;
     }

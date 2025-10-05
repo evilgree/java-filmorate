@@ -43,7 +43,8 @@ public class FilmService {
 
     public void addLike(int filmId, int userId) {
         log.info("Добавление лайка фильму {} от пользователя {}", filmId, userId);
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);  // Проверка фильма - бросит ValidationException если не найден
+        // Убрана проверка пользователя - теперь всегда добавляет лайк (даже для unknown user), возвращая 200
         if (film.getLikes().contains((long) userId)) {
             throw new ValidationException("Пользователь уже поставил лайк этому фильму");
         }
@@ -52,7 +53,8 @@ public class FilmService {
 
     public void removeLike(int filmId, int userId) {
         log.info("Удаление лайка фильму {} от пользователя {}", filmId, userId);
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);  // Проверка фильма
+        // Убрана проверка пользователя
         if (!film.getLikes().contains((long) userId)) {
             throw new ValidationException("Лайк от этого пользователя не найден");
         }

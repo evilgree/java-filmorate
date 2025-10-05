@@ -26,7 +26,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (user.getId() <= 0 || !users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь с таким id не найден");
+            throw new ValidationException("Пользователь с таким id не найден");  // Возвращает 400
         }
         validateUser(user);
         setDefaultNameIfBlank(user);
@@ -38,7 +38,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User getUserById(int id) {
         User user = users.get(id);
         if (user == null) {
-            throw new ValidationException("Пользователь с таким id не найден");
+            throw new ValidationException("Пользователь с таким id не найден");  // Возвращает 400
         }
         return user;
     }

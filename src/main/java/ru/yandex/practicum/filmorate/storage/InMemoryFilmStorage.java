@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -28,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         if (film.getId() <= 0 || !films.containsKey(film.getId())) {
-            throw new ValidationException("Фильм с таким id не найден");  // Возвращает 400
+            throw new ValidationException("Фильм с таким id не найден");
         }
         validateFilm(film);
         films.put(film.getId(), film);
@@ -39,7 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(int id) {
         Film film = films.get(id);
         if (film == null) {
-            throw new ValidationException("Фильм с таким id не найден");  // Возвращает 400
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Фильм с таким id не найден");
         }
         return film;
     }
@@ -47,6 +49,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Collection<Film> getAllFilms() {
         return films.values();
+    }
+
+    @Override
+    public boolean containsFilm(int id) {
+        return films.containsKey(id);
     }
 
     private void validateFilm(Film film) {

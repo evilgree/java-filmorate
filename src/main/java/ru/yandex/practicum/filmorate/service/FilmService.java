@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,8 +44,10 @@ public class FilmService {
 
     public void addLike(int filmId, int userId) {
         log.info("Добавление лайка фильму {} от пользователя {}", filmId, userId);
-        Film film = filmStorage.getFilmById(filmId);  // Проверка фильма - бросит ValidationException если не найден
-        // Убрана проверка пользователя - теперь всегда добавляет лайк (даже для unknown user), возвращая 200
+        if (!filmStorage.containsFilm(filmId)) {
+            throw new ValidationException("Фильм с таким id не найден");
+        }
+        Film film = filmStorage.getFilmById(filmId);
         if (film.getLikes().contains((long) userId)) {
             throw new ValidationException("Пользователь уже поставил лайк этому фильму");
         }
@@ -53,8 +56,10 @@ public class FilmService {
 
     public void removeLike(int filmId, int userId) {
         log.info("Удаление лайка фильму {} от пользователя {}", filmId, userId);
-        Film film = filmStorage.getFilmById(filmId);  // Проверка фильма
-        // Убрана проверка пользователя
+        if (!filmStorage.containsFilm(filmId)) {
+            throw new ValidationException("Фильм с таким id не найден");
+        }
+        Film film = filmStorage.getFilmById(filmId);
         if (!film.getLikes().contains((long) userId)) {
             throw new ValidationException("Лайк от этого пользователя не найден");
         }
